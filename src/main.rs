@@ -1,17 +1,16 @@
+mod camera;
+mod hits;
+mod material;
+mod ray;
+mod sphere;
+mod utils;
+
 use camera::Camera;
 use glam::Vec3;
 use hits::{HitRecord, Hitable};
 use image::Rgb;
-use sphere::Sphere;
-
-pub mod camera;
-mod material;
-mod ray;
 use ray::Ray;
-
-mod hits;
-mod sphere;
-mod utils;
+use sphere::Sphere;
 
 fn color<T>(ray: Ray, world: &Vec<T>) -> Vec3
 where
@@ -55,12 +54,11 @@ fn main() {
             }
 
             col /= smoothing as f32;
-            col = Vec3::from_array(col.to_array().map(|val| val.sqrt()));
 
             img.put_pixel(
                 x,
                 y,
-                Rgb(col.to_array().map(|val| (255.99 * val).floor() as u8)),
+                Rgb(col.to_array().map(|val| (255.99 * val.sqrt()).floor() as u8)),
             );
         }
     }

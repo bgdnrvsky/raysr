@@ -8,7 +8,7 @@ mod utils;
 use camera::Camera;
 use glam::Vec3;
 use hits::{HitRecord, Hitable};
-use image::Rgb;
+use image::{DynamicImage, Rgb};
 use material::Material;
 use ray::Ray;
 use sphere::Sphere;
@@ -68,6 +68,7 @@ fn main() {
             0.5,
             material::MaterialType::Metal {
                 albedo: Vec3::new(0.8, 0.6, 0.2),
+                fuzz: 0.3,
             },
         ),
         Sphere::new(
@@ -75,6 +76,7 @@ fn main() {
             0.5,
             material::MaterialType::Metal {
                 albedo: Vec3::splat(0.8),
+                fuzz: 1.0,
             },
         ),
     ];
@@ -102,5 +104,6 @@ fn main() {
         }
     }
 
+    let img = DynamicImage::from(img).rotate180();
     img.save("test.ppm").expect("Failed to save image");
 }

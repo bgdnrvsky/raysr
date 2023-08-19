@@ -50,16 +50,9 @@ impl Hitable for Sphere {
         if discriminant > 0.0 {
             let temp = (-1.0 * b - discriminant.sqrt()) / a;
 
-            if (t_min..t_max).contains(&temp) {
-                record.t = temp;
-                record.p = ray.point_at_parameter(record.t);
-                record.normal = (record.p - self.center) / self.radius;
-                record.material = self.material;
-                return true;
-            }
-
-            let temp = (-1.0 * b + discriminant.sqrt()) / a;
-            if (t_min..t_max).contains(&temp) {
+            if (t_min..t_max).contains(&temp)
+                || (t_min..t_max).contains(&((-1.0 * b + discriminant.sqrt()) / a))
+            {
                 record.t = temp;
                 record.p = ray.point_at_parameter(record.t);
                 record.normal = (record.p - self.center) / self.radius;

@@ -1,11 +1,25 @@
-use crate::ray::Ray;
+use crate::{material::MaterialType, ray::Ray};
 use glam::Vec3;
 
-#[derive(Debug, Clone, Default, Copy)]
+#[derive(Debug, Clone, Copy)]
 pub struct HitRecord {
     pub t: f32,
     pub p: Vec3,
     pub normal: Vec3,
+    pub material: MaterialType,
+}
+
+impl Default for HitRecord {
+    fn default() -> Self {
+        Self {
+            t: Default::default(),
+            p: Default::default(),
+            normal: Default::default(),
+            material: MaterialType::Lambertian {
+                albedo: Vec3::splat(0.8),
+            },
+        }
+    }
 }
 
 pub trait Hitable {

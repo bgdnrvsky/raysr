@@ -1,15 +1,20 @@
-use crate::hits::Hitable;
+use crate::{hits::Hitable, material::MaterialType};
 use glam::Vec3;
 
 #[derive(Debug)]
 pub struct Sphere {
     center: Vec3,
     radius: f32,
+    material: MaterialType,
 }
 
 impl Sphere {
-    pub fn new(center: Vec3, radius: f32) -> Self {
-        Self { center, radius }
+    pub fn new(center: Vec3, radius: f32, material: MaterialType) -> Self {
+        Self {
+            center,
+            radius,
+            material,
+        }
     }
 }
 
@@ -49,6 +54,7 @@ impl Hitable for Sphere {
                 record.t = temp;
                 record.p = ray.point_at_parameter(record.t);
                 record.normal = (record.p - self.center) / self.radius;
+                record.material = self.material;
                 return true;
             }
 
@@ -57,6 +63,7 @@ impl Hitable for Sphere {
                 record.t = temp;
                 record.p = ray.point_at_parameter(record.t);
                 record.normal = (record.p - self.center) / self.radius;
+                record.material = self.material;
                 return true;
             }
         }

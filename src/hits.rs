@@ -1,4 +1,4 @@
-use crate::{material::Material, ray::Ray};
+use crate::{ray::Ray};
 use glam::Vec3;
 
 #[derive(Debug, Clone, Default, Copy)]

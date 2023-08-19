@@ -1,4 +1,4 @@
-use crate::{hits::Hitable, material::Material};
+use crate::{hits::Hitable};
 use glam::Vec3;
 
 #[derive(Debug)]

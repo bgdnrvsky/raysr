@@ -1,4 +1,4 @@
-use crate::{hits::Hitable};
+use crate::hits::Hitable;
 use glam::Vec3;
 
 #[derive(Debug)]
@@ -34,8 +34,7 @@ impl Hitable for Sphere {
         t_min: f32,
         t_max: f32,
         record: &mut crate::hits::HitRecord,
-    ) -> bool
-    {
+    ) -> bool {
         let oc = ray.origin() - self.center;
 
         let a = ray.direction().dot(ray.direction());

@@ -1,4 +1,4 @@
-use crate::{ray::Ray};
+use crate::ray::Ray;
 use glam::Vec3;
 
 #[derive(Debug, Clone, Default, Copy)]
@@ -9,26 +9,14 @@ pub struct HitRecord {
 }
 
 pub trait Hitable {
-    fn hit(
-        &self,
-        ray: &Ray,
-        t_min: f32,
-        t_max: f32,
-        record: &mut HitRecord,
-    ) -> bool;
+    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32, record: &mut HitRecord) -> bool;
 }
 
 impl<T> Hitable for Vec<T>
 where
     T: Hitable,
 {
-    fn hit(
-        &self,
-        ray: &Ray,
-        t_min: f32,
-        t_max: f32,
-        record: &mut HitRecord,
-    ) -> bool {
+    fn hit(&self, ray: &Ray, t_min: f32, t_max: f32, record: &mut HitRecord) -> bool {
         let mut temp_rec = HitRecord::default();
 
         let mut hit_anything = false;

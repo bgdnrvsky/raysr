@@ -5,8 +5,8 @@ use image::Rgb;
 use sphere::Sphere;
 
 pub mod camera;
-mod ray;
 mod material;
+mod ray;
 use ray::Ray;
 
 mod hits;
@@ -21,10 +21,7 @@ where
 
     if world.hit(&ray, 0.001, f32::MAX, &mut record) {
         let target = record.p + record.normal + sphere::random_in_unit_sphere();
-        0.5 * color(
-            Ray::new(record.p, target - record.p),
-            world,
-        )
+        0.5 * color(Ray::new(record.p, target - record.p), world)
     } else {
         let unit_direction = utils::unit_vec(ray.direction());
         let t = 0.5 * (unit_direction.y + 1.0);
@@ -33,8 +30,8 @@ where
 }
 
 fn main() {
-    let width = 1920;
-    let height = 1080;
+    let width = 200;
+    let height = 100;
     let smoothing = 100;
 
     let mut img = image::ImageBuffer::new(width, height);

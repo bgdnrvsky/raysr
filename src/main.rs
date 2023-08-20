@@ -9,9 +9,12 @@ use camera::Camera;
 use glam::Vec3;
 use hits::{HitRecord, Hitable};
 use image::{DynamicImage, Rgb};
+use itertools::Itertools;
 use material::Material;
 use ray::Ray;
+use rayon::prelude::{IntoParallelIterator, ParallelBridge, ParallelIterator};
 use sphere::Sphere;
+use std::sync::{Arc, Mutex};
 
 fn color<T>(ray: Ray, world: &Vec<T>, depth: usize) -> Vec3
 where
@@ -44,7 +47,7 @@ fn main() {
     let height = 1080;
     let smoothing = 100;
 
-    let mut img = image::ImageBuffer::new(width, height);
+    let img = Arc::new(Mutex::new(image::ImageBuffer::new(width, height)));
 
     let camera = Camera::default();
 
@@ -85,29 +88,33 @@ fn main() {
         ),
     ];
 
-    for y in (0..height).rev() {
-        for x in 0..width {
-            let mut col = Vec3::ZERO;
-
-            for _ in 0..smoothing {
+    (0..height)
+        .rev()
+        .cartesian_product(0..width)
+        .par_bridge()
+        .into_par_iter()
+        .for_each(|(y, x)| {
+            let col = std::iter::repeat_with(|| {
                 let u = (x as f32 + rand::random::<f32>()) / width as f32;
                 let v = (y as f32 + rand::random::<f32>()) / height as f32;
                 let r = camera.get_ray(u, v);
-                col += color(r, &world, 0);
-            }
+                color(r, &world, 0)
+            })
+            .take(smoothing)
+            .sum::<Vec3>()
+                / smoothing as f32;
 
-            col /= smoothing as f32;
-
-            img.put_pixel(
+            img.lock().unwrap().put_pixel(
                 x,
                 y,
                 Rgb(col
                     .to_array()
                     .map(|val| (255.99 * val.sqrt()).round() as u8)),
             );
-        }
-    }
+        });
 
-    let img = DynamicImage::from(img).rotate180();
-    img.save("test.ppm").expect("Failed to save image");
+    DynamicImage::from(Arc::into_inner(img).unwrap().into_inner().unwrap())
+        .rotate180()
+        .save("test.ppm")
+        .expect("Failed to save image");
 }

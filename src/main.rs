@@ -50,13 +50,15 @@ fn main() {
 
     let world = vec![
         Sphere::new(
+            // Ball in the center
             Vec3::new(0.0, 0.0, -1.0),
             0.5,
             material::MaterialType::Lambertian {
-                albedo: Vec3::new(0.8, 0.8, 0.3),
+                albedo: Vec3::new(0.8, 0.3, 0.3),
             },
         ),
         Sphere::new(
+            // Ball on the bottom
             Vec3::new(0.0, -100.5, -1.0),
             100.0,
             material::MaterialType::Lambertian {
@@ -64,19 +66,21 @@ fn main() {
             },
         ),
         Sphere::new(
+            // Ball on the left
             Vec3::new(1.0, 0.0, -1.0),
             0.5,
             material::MaterialType::Metal {
                 albedo: Vec3::new(0.8, 0.6, 0.2),
-                fuzz: 0.3,
+                blur: 1.0,
             },
         ),
         Sphere::new(
+            // Ball on the right
             Vec3::new(-1.0, 0.0, -1.0),
             0.5,
             material::MaterialType::Metal {
                 albedo: Vec3::splat(0.8),
-                fuzz: 1.0,
+                blur: 0.3,
             },
         ),
     ];
@@ -99,7 +103,7 @@ fn main() {
                 y,
                 Rgb(col
                     .to_array()
-                    .map(|val| (255.99 * val.sqrt()).floor() as u8)),
+                    .map(|val| (255.99 * val.sqrt()).round() as u8)),
             );
         }
     }

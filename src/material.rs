@@ -19,7 +19,7 @@ pub trait Material {
 #[derive(Debug, Clone, Copy)]
 pub enum MaterialType {
     Lambertian { albedo: Vec3 },
-    Metal { albedo: Vec3, fuzz: f32 },
+    Metal { albedo: Vec3, blur: f32 },
 }
 
 impl Material for MaterialType {
@@ -38,11 +38,11 @@ impl Material for MaterialType {
 
                 true
             }
-            MaterialType::Metal { albedo, fuzz } => {
+            Self::Metal { albedo, blur } => {
                 let reflected = ray::reflect(utils::unit_vec(ray.direction()), record.normal);
                 *scattered = Ray::new(
                     record.p,
-                    reflected + fuzz.max(1.0) * sphere::random_in_unit_sphere(),
+                    reflected + blur.min(1.0) * sphere::random_in_unit_sphere(),
                 );
                 *attenuation = *albedo;
 

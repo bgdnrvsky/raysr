@@ -48,10 +48,13 @@ impl Hitable for Sphere {
         let discriminant = b.powi(2) - a * c;
 
         if discriminant > 0.0 {
-            let temp = (-1.0 * b - discriminant.sqrt()) / a;
+            let root1 = || (-1.0 * b - discriminant.sqrt()) / a;
+            let root2 = || (-1.0 * b + discriminant.sqrt()) / a;
 
-            if (t_min..t_max).contains(&temp)
-                || (t_min..t_max).contains(&((-1.0 * b + discriminant.sqrt()) / a))
+            if let Some(temp) = (t_min..t_max)
+                .contains(&root1())
+                .then(root1)
+                .or((t_min..t_max).contains(&root2()).then(root2))
             {
                 record.t = temp;
                 record.p = ray.point_at_parameter(record.t);

@@ -81,9 +81,8 @@ fn main() {
             // Ball on the right
             Vec3::new(-1.0, 0.0, -1.0),
             0.5,
-            material::MaterialType::Metal {
-                albedo: Vec3::splat(0.8),
-                blur: 0.3,
+            material::MaterialType::Dielectric {
+                refraction_index: 1.5,
             },
         ),
     ];

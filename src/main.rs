@@ -57,7 +57,7 @@ fn main() {
             Vec3::new(0.0, 0.0, -1.0),
             0.5,
             material::MaterialType::Lambertian {
-                albedo: Vec3::new(0.8, 0.3, 0.3),
+                albedo: Vec3::new(0.1, 0.2, 0.5),
             },
         ),
         Sphere::new(

@@ -9,10 +9,22 @@ pub struct Camera {
     lower_left: Vec3,
     horizontal: Vec3,
     vertical: Vec3,
+    lens_radius: f32,
+    u: Vec3,
+    v: Vec3,
+    w: Vec3,
 }
 
 impl Camera {
-    pub fn new(lookfrom: Vec3, lookat: Vec3, vup: Vec3, vfov: f32, aspect: f32) -> Self {
+    pub fn new(
+        lookfrom: Vec3,
+        lookat: Vec3,
+        vup: Vec3,
+        vfov: f32,
+        aspect: f32,
+        aperture: f32,
+        focus_dist: f32,
+    ) -> Self {
         // vfov is top to bottom in degrees
         let theta = vfov * PI / 180.0;
         let half_height = f32::tan(theta / 2.0);
@@ -24,27 +36,36 @@ impl Camera {
 
         Self {
             origin: lookfrom,
-            lower_left: lookfrom - half_width * u - half_height * v - w,
-            horizontal: 2.0 * half_width * u,
-            vertical: 2.0 * half_height * v,
+            lower_left: lookfrom
+                - half_width * u * focus_dist
+                - half_height * v * focus_dist
+                - focus_dist * w,
+            horizontal: 2.0 * half_width * u * focus_dist,
+            vertical: 2.0 * half_height * v * focus_dist,
+            lens_radius: aperture / 2.0,
+            u,
+            v,
+            w,
         }
     }
 
-    pub fn get_ray(&self, u: f32, v: f32) -> Ray {
+    pub fn get_ray(&self, s: f32, t: f32) -> Ray {
+        let rd = self.lens_radius * random_in_unit_disk();
+        let offset = self.u * rd.x + self.v * rd.y;
         Ray::new(
-            self.origin,
-            self.lower_left + u * self.horizontal + v * self.vertical - self.origin,
+            self.origin + offset,
+            self.lower_left + s * self.horizontal + t * self.vertical - self.origin - offset,
         )
     }
 }
 
-impl Default for Camera {
-    fn default() -> Self {
-        Self {
-            origin: Vec3::splat(0.0),
-            lower_left: Vec3::new(-2.0, -1.0, -1.0),
-            horizontal: Vec3::new(4.0, 0.0, 0.0),
-            vertical: Vec3::new(0.0, 2.0, 0.0),
+pub fn random_in_unit_disk() -> Vec3 {
+    loop {
+        let p = 2.0 * Vec3::new(rand::random::<f32>(), rand::random::<f32>(), 0.0)
+            - Vec3::new(1.0, 1.0, 0.0);
+
+        if p.dot(p) < 1.0 {
+            break p;
         }
     }
 }

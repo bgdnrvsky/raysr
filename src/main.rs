@@ -49,7 +49,13 @@ fn main() {
 
     let img = Arc::new(Mutex::new(image::ImageBuffer::new(width, height)));
 
-    let camera = Camera::default();
+    let camera = Camera::new(
+        Vec3::new(-2.0, 2.0, 1.0),
+        Vec3::new(0.0, 0.0, -1.0),
+        Vec3::new(0.0, 1.0, 0.0),
+        25.0,
+        width as f32 / height as f32,
+    );
 
     let world = vec![
         Sphere::new(

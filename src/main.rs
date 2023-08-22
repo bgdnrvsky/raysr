@@ -85,6 +85,14 @@ fn main() {
                 refraction_index: 1.5,
             },
         ),
+        Sphere::new(
+            // Ball on the right (inner)
+            Vec3::new(-1.0, 0.0, -1.0),
+            -0.45,
+            material::MaterialType::Dielectric {
+                refraction_index: 1.5,
+            },
+        ),
     ];
 
     (0..height)

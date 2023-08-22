@@ -55,22 +55,34 @@ impl Material for MaterialType {
                 let ni_over_nt: f32;
                 *attenuation = Vec3::new(1.0, 1.0, 1.0);
                 let mut refracted: Vec3 = Vec3::ZERO;
+                let reflect_prob: f32;
+                let cosine: f32;
 
                 if ray.direction().dot(record.normal) > 0.0 {
                     outward_normal = -record.normal;
                     ni_over_nt = *refraction_index;
+                    cosine = refraction_index * ray.direction().dot(record.normal)
+                        / ray.direction().length();
                 } else {
                     outward_normal = record.normal;
                     ni_over_nt = 1.0 / *refraction_index;
+                    cosine = -ray.direction().dot(record.normal) / ray.direction().length();
                 }
 
                 if ray::refract(ray.direction(), outward_normal, ni_over_nt, &mut refracted) {
-                    *scattered = Ray::new(record.p, refracted);
-                    true
+                    reflect_prob = utils::schlick(cosine, *refraction_index);
                 } else {
                     *scattered = Ray::new(record.p, reflected);
-                    false
+                    reflect_prob = 1.0;
                 }
+
+                if rand::random::<f32>() < reflect_prob {
+                    *scattered = Ray::new(record.p, reflected);
+                } else {
+                    *scattered = Ray::new(record.p, refracted);
+                }
+
+                true
             }
         }
     }

@@ -53,7 +53,7 @@ impl Material for MaterialType {
                 let outward_normal: Vec3;
                 let reflected = ray::reflect(ray.direction(), record.normal);
                 let ni_over_nt: f32;
-                *attenuation = Vec3::new(1.0, 1.0, 0.0);
+                *attenuation = Vec3::new(1.0, 1.0, 1.0);
                 let mut refracted: Vec3 = Vec3::ZERO;
 
                 if ray.direction().dot(record.normal) > 0.0 {

@@ -42,6 +42,92 @@ where
     }
 }
 
+fn random_scene() -> Vec<Sphere> {
+    let mut world = Vec::with_capacity(500);
+
+    world.push(Sphere::new(
+        Vec3::new(0.0, -1000.0, 0.0),
+        1000.0,
+        material::MaterialType::Lambertian {
+            albedo: Vec3::splat(0.5),
+        },
+    ));
+
+    for a in -11..11 {
+        for b in -11..11 {
+            let choose_mat = rand::random::<f32>();
+
+            let center = Vec3::new(
+                a as f32 + 0.9 * rand::random::<f32>(),
+                0.2,
+                b as f32 + 0.9 * rand::random::<f32>(),
+            );
+
+            if (center - Vec3::new(4.0, 0.2, 0.0)).length() > 0.9 {
+                world.push(if choose_mat < 0.8 {
+                    Sphere::new(
+                        center,
+                        0.2,
+                        material::MaterialType::Lambertian {
+                            albedo: Vec3::new(
+                                rand::random::<f32>() * rand::random::<f32>(),
+                                rand::random::<f32>() * rand::random::<f32>(),
+                                rand::random::<f32>() * rand::random::<f32>(),
+                            ),
+                        },
+                    )
+                } else if choose_mat < 0.95 {
+                    Sphere::new(
+                        center,
+                        0.2,
+                        material::MaterialType::Metal {
+                            albedo: Vec3::new(
+                                0.5 * (1.0 + rand::random::<f32>()),
+                                0.5 * (1.0 + rand::random::<f32>()),
+                                0.5 * (1.0 + rand::random::<f32>()),
+                            ),
+                            blur: 0.5 * rand::random::<f32>(),
+                        },
+                    )
+                } else {
+                    Sphere::new(
+                        center,
+                        0.2,
+                        material::MaterialType::Dielectric {
+                            refraction_index: 1.5,
+                        },
+                    )
+                });
+            }
+        }
+    }
+
+    world.push(Sphere::new(
+        Vec3::new(0.0, 1.0, 0.0),
+        1.0,
+        material::MaterialType::Dielectric {
+            refraction_index: 1.5,
+        },
+    ));
+    world.push(Sphere::new(
+        Vec3::new(-4.0, 1.0, 0.0),
+        1.0,
+        material::MaterialType::Lambertian {
+            albedo: Vec3::new(0.4, 0.2, 0.1),
+        },
+    ));
+    world.push(Sphere::new(
+        Vec3::new(4.0, 1.0, 0.0),
+        1.0,
+        material::MaterialType::Metal {
+            albedo: Vec3::new(0.7, 0.6, 0.5),
+            blur: 0.0,
+        },
+    ));
+
+    world
+}
+
 fn main() {
     let width = 1920;
     let height = 1080;
@@ -62,49 +148,9 @@ fn main() {
         (lookfrom - lookat).length(),
     );
 
-    let world = vec![
-        Sphere::new(
-            // Ball in the center
-            Vec3::new(0.0, 0.0, -1.0),
-            0.5,
-            material::MaterialType::Lambertian {
-                albedo: Vec3::new(0.1, 0.2, 0.5),
-            },
-        ),
-        Sphere::new(
-            // Ball on the bottom
-            Vec3::new(0.0, -100.5, -1.0),
-            100.0,
-            material::MaterialType::Lambertian {
-                albedo: Vec3::new(0.8, 0.8, 0.0),
-            },
-        ),
-        Sphere::new(
-            // Ball on the left
-            Vec3::new(1.0, 0.0, -1.0),
-            0.5,
-            material::MaterialType::Metal {
-                albedo: Vec3::new(0.8, 0.6, 0.2),
-                blur: 1.0,
-            },
-        ),
-        Sphere::new(
-            // Ball on the right
-            Vec3::new(-1.0, 0.0, -1.0),
-            0.5,
-            material::MaterialType::Dielectric {
-                refraction_index: 1.5,
-            },
-        ),
-        Sphere::new(
-            // Ball on the right (inner)
-            Vec3::new(-1.0, 0.0, -1.0),
-            -0.45,
-            material::MaterialType::Dielectric {
-                refraction_index: 1.5,
-            },
-        ),
-    ];
+    let world = random_scene();
+
+    eprintln!("INFO: Generated random scene!");
 
     (0..height)
         .rev()

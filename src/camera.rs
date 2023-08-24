@@ -4,6 +4,7 @@ use glam::Vec3;
 
 use crate::{ray::Ray, utils};
 
+#[allow(unused)]
 pub struct Camera {
     origin: Vec3,
     lower_left: Vec3,

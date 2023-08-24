@@ -16,7 +16,7 @@ use material::Material;
 use ray::Ray;
 use rayon::prelude::{IntoParallelIterator, ParallelBridge, ParallelIterator};
 use std::{
-    sync::{Arc, Mutex},
+    sync::Mutex,
     time::Instant,
 };
 
@@ -70,7 +70,7 @@ where
 fn main() {
     let args = Args::parse();
 
-    let img = Arc::new(Mutex::new(image::ImageBuffer::new(args.width, args.height)));
+    let img = Mutex::new(image::ImageBuffer::new(args.width, args.height));
 
     let lookfrom = Vec3::new(3.5, 1.0, 2.5);
     let lookat = Vec3::new(0.0, 0.0, 0.0);
@@ -87,7 +87,7 @@ fn main() {
 
     let world = utils::random_scene();
 
-    let progress = Arc::new(Mutex::new(Loading::default()));
+    let progress = Mutex::new(Loading::default());
     progress.lock().unwrap().info("Generated random scene!");
     let start = Instant::now();
 
@@ -124,9 +124,9 @@ fn main() {
             );
         });
 
-    let progress = Arc::try_unwrap(progress).unwrap().into_inner().unwrap();
+    let progress = progress.into_inner().unwrap();
 
-    let generated = match DynamicImage::from(Arc::into_inner(img).unwrap().into_inner().unwrap())
+    let generated = match DynamicImage::from(img.into_inner().unwrap())
         .rotate180()
         .save(&args.out)
     {

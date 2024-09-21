@@ -15,10 +15,7 @@ use loading::Loading;
 use material::Material;
 use ray::Ray;
 use rayon::prelude::{IntoParallelIterator, ParallelBridge, ParallelIterator};
-use std::{
-    sync::Mutex,
-    time::Instant,
-};
+use std::{sync::Mutex, time::Instant};
 
 #[derive(Debug, Parser)]
 #[command(name = "raysr", version)]
@@ -137,8 +134,8 @@ fn main() {
             ));
             true
         }
-        Err(_) => {
-            progress.fail("Failed to generate scene");
+        Err(e) => {
+            progress.fail(format!("Failed to generate scene: {e}"));
             false
         }
     };

@@ -25,9 +25,9 @@ use std::{
 #[command(about = "Ray tracer written while following 'Ray tracer in a weekend' book!", long_about=None)]
 #[command(arg_required_else_help = true)]
 struct Args {
-    #[arg(short, long, value_name = "NON-NEGATIVE")]
+    #[arg(long, value_name = "NON-NEGATIVE")]
     width: u32,
-    #[arg(short, long, value_name = "NON-NEGATIVE")]
+    #[arg(long, value_name = "NON-NEGATIVE")]
     height: u32,
     #[arg(short, long, default_value_t = 100, value_name = "NON-NEGATIVE")]
     smoothing: usize,

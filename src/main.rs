@@ -125,7 +125,7 @@ fn main() {
 
     let generated = match DynamicImage::from(img.into_inner().unwrap())
         .rotate180()
-        .save(&args.out)
+        .save_with_format(&args.out, image::ImageFormat::Pnm)
     {
         Ok(_) => {
             progress.success(format!(
